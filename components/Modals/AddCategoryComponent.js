@@ -1,0 +1,153 @@
+"use client";
+
+import { useState } from "react";
+import { CldUploadWidget } from "next-cloudinary";
+import { FiX, FiUpload, FiCheck, FiLoader } from "react-icons/fi";
+
+const AddCategoryComponent = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+  });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleUploadSuccess = (result) => {
+    const url = result?.info?.secure_url;
+    if (url) {
+      setFormData((prev) => ({ ...prev, image: url }));
+    }
+    setIsUploading(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const categoryData = {
+      name: formData.name,
+      image: formData.image,
+    };
+    console.log("Category added:", categoryData);
+  };
+
+  const handleCancel = () => {
+    console.log("Add category cancelled");
+  };
+
+  const removeImage = (e) => {
+    e.stopPropagation();
+    setFormData((prev) => ({ ...prev, image: "" }));
+  };
+
+  return (
+    <div className="flex-1 p-6 md:p-8 bg-linear-to-br from-gray-50 via-white to-gray-50 min-h-screen">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Add New Category
+            </h2>
+            {/* <p className="text-sm text-gray-500 mt-1">Create a new category</p> */}
+          </div>
+       
+        </div>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 p-8 md:p-10 space-y-6 backdrop-blur-sm"
+        >
+          {/* Category Name */}
+          <div className="space-y-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-semibold text-gray-700"
+            >
+              Category Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+              placeholder="Enter category name..."
+              className="w-full px-4 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 text-gray-900 placeholder:text-gray-400"
+              required
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">
+              Image
+            </label>
+            <CldUploadWidget
+              uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+              onSuccess={handleUploadSuccess}
+              onQueuesStart={() => setIsUploading(true)}
+              onQueuesEnd={() => setIsUploading(false)}
+            >
+              {({ open }) => (
+                <div onClick={() => open()} className="relative border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center cursor-pointer hover:border-amber-400 hover:bg-amber-50/30 transition-all duration-300 group">
+                  {isUploading ? (
+                    <div className="space-y-4">
+                      <FiLoader className="w-14 h-14 mx-auto animate-spin text-amber-500" />
+                      <p className="text-gray-600 font-medium">Uploading...</p>
+                    </div>
+                  ) : formData?.image ? (
+                    <div className="space-y-4">
+                      <div className="w-28 h-28 mx-auto rounded-2xl overflow-hidden border-2 border-amber-200 shadow-lg bg-white">
+                        <img src={formData.image} alt="Image Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-700 font-medium">Image uploaded</p>
+                        <p className="text-xs text-gray-500">Click to change</p>
+                      </div>
+                      <button type="button" onClick={removeImage} className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+                        <FiX className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="w-16 h-16 mx-auto bg-amber-50 rounded-2xl flex items-center justify-center group-hover:bg-amber-100 transition-colors duration-300">
+                        <FiUpload className="w-8 h-8 text-amber-500" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-gray-700 font-medium">Upload Image</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG or GIF · Max 2MB
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CldUploadWidget>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-6">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-6 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300/50 transition-all duration-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-3 bg-linear-to-r from-amber-500 to-yellow-500 text-white font-semibold rounded-xl hover:from-amber-600 hover:to-yellow-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all duration-200 flex items-center gap-2 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={isUploading}
+            >
+              <FiCheck className="w-4 h-4" />
+              <span>Save Category</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddCategoryComponent;
