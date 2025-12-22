@@ -153,13 +153,8 @@ const AdminSidebar = () => {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200/50 shadow-2xl z-40">
         <div className="flex items-center justify-around px-2 py-2 overflow-x-auto scrollbar-hide">
-          {flatMenuItems.slice(0, 5).map(renderMobileMenuItem)}
-          {flatMenuItems.length > 5 && (
-            <button className="flex flex-col items-center justify-center gap-1 py-2 px-3 text-gray-600">
-              <FiList className="w-5 h-5" />
-              <span className="text-[10px] font-medium">More</span>
-            </button>
-          )}
+          {flatMenuItems.map(renderMobileMenuItem)}
+          
         </div>
       </nav>
 

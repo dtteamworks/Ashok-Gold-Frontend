@@ -282,40 +282,41 @@ const AdminDashboard = () => {
 
       {/* 4 Stats & Charts */}
       <section className="flex h-fit gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8 flex-wrap">
-        {/* Total Categories Card */}
-        <div className="flex-1 min-w-50 bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-shadow duration-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
-                Total Categories
-              </p>
-              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                {categoriesCount}
-              </p>
+        <div className="flex flex-1 md:flex-col gap-3 sm:gap-6">
+          {/* Total Categories Card */}
+          <div className="min-w-50 bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 translate-0 shadow-sm border border-gray-200/50 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                  Total Categories
+                </p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                  {categoriesCount}
+                </p>
+              </div>
+              <div className="p-2 sm:p-2.5 bg-linear-to-br from-red-400 to-red-500 rounded-lg">
+                <BiCategoryAlt className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
             </div>
-            <div className="p-2 sm:p-2.5 bg-linear-to-br from-red-400 to-red-500 rounded-lg">
-              <BiCategoryAlt className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          </div>
+
+          {/* Total Products Card */}
+          <div className="min-w-50 bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 translate-0 shadow-sm border border-gray-200/50 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                  Total Products
+                </p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                  {productsCount}+
+                </p>
+              </div>
+              <div className="p-2 sm:p-2.5 bg-linear-to-br from-blue-400 to-blue-500 rounded-lg">
+                <GoPackage className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Total Products Card */}
-        <div className="flex-1 min-w-50 bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-shadow duration-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
-                Total Products
-              </p>
-              <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                {productsCount}+
-              </p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-linear-to-br from-blue-400 to-blue-500 rounded-lg">
-              <GoPackage className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-          </div>
-        </div>
-
         {/* Banners Status Chart Card */}
         <div className="flex-1 min-w-62.5 bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm border border-gray-200/50 hover:shadow-md transition-shadow duration-200">
           <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">
