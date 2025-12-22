@@ -34,22 +34,20 @@ const AdminDashboard = () => {
       const [
         categoriesRes,
         productsRes,
-        activeBannersRes,
-        inactiveBannersRes,
+        allBannersRes,
         allEnquiriesRes,
       ] = await Promise.all([
         fetch(`${API_BASE}/categories`), // All categories
         fetch(`${API_BASE}/products`), // All products
         fetch(`${API_BASE}/banners?status=active`), // Active banners
-        fetch(`${API_BASE}/banners?status=inactive`), // Inactive banners
+        fetch(`${API_BASE}/banners`), // All banners
         fetch(`${API_BASE}/enquiries`), // All enquiries for trend
       ]);
 
       if (
         !categoriesRes.ok ||
         !productsRes.ok ||
-        !activeBannersRes.ok ||
-        !inactiveBannersRes.ok ||
+        !allBannersRes.ok ||
         !allEnquiriesRes.ok
       ) {
         throw new Error("One or more fetches failed");
@@ -58,26 +56,25 @@ const AdminDashboard = () => {
       const [
         categories,
         products,
-        activeBannersData,
-        inactiveBannersData,
+        allBannersData,
         allEnquiries,
       ] = await Promise.all([
         categoriesRes.json(),
         productsRes.json(),
-        activeBannersRes.json(),
-        inactiveBannersRes.json(),
+        allBannersRes.json(),
         allEnquiriesRes.json(),
       ]);
+
+      // Logic: Filter karke count nikalo
+      const allBanners = allBannersData.data || allBannersData;
+      const activeBannersCount = allBanners.filter(banner => banner.status === 'active').length;
+      const inactiveBannersCount = allBanners.filter(banner => banner.status === 'inactive').length;
 
       // Set counts
       setCategoriesCount(categories.total || categories.data.length);
       setProductsCount(products.total || products.data.length);
-      setActiveBanners(
-        activeBannersData.total || activeBannersData.data.length
-      );
-      setInactiveBanners(
-        inactiveBannersData.total || inactiveBannersData.data.length
-      );
+      setActiveBanners(activeBannersCount);
+      setInactiveBanners(inactiveBannersCount);
 
       // Map & set enquiries (for line chart & list)
       const mappedEnquiries = allEnquiries.data.map((enq) => ({
