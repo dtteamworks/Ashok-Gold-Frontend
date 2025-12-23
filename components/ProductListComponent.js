@@ -17,6 +17,7 @@ const ProductListComponent = () => {
     name: "",
     image: "",
     description: "",
+    productCategory: "",
     active: true,
   });
   // =====================================================================
@@ -30,13 +31,14 @@ const ProductListComponent = () => {
       if (!res.ok) throw new Error("Fetch failed");
       const { data } = await res.json();
       console.log(data);
-      
+
       // Map backend data to frontend format (description bhi map karo if UI mein chahiye)
       const mapped = data.map((prod) => ({
         id: prod._id,
         name: prod.productName,
         image: prod.image,
         description: prod.description, // Save for edit
+        productCategory: prod.productCategory,
         active: prod.status === "active",
       }));
       setProducts(mapped);
@@ -69,6 +71,7 @@ const ProductListComponent = () => {
       name: product.name,
       image: product.image,
       description: product.description,
+      productCategory: product.productCategory,
       active: product.active,
     });
     setShowAddModal(true);
@@ -99,6 +102,7 @@ const ProductListComponent = () => {
         productName: formData.name.trim(),
         image: formData.image,
         description: formData.description.trim(),
+        productCategory: formData.productCategory,
         status: formData.active ? "active" : "inactive",
       };
       let res;
@@ -126,12 +130,24 @@ const ProductListComponent = () => {
   const closeModal = () => {
     setShowAddModal(false);
     setEditingProduct(null);
-    setFormData({ name: "", image: "", description: "", active: true });
+    setFormData({
+      name: "",
+      image: "",
+      description: "",
+      productCategory: "",
+      active: true,
+    });
   };
 
   const openAddModal = () => {
     setEditingProduct(null);
-    setFormData({ name: "", image: "", description: "", active: true });
+    setFormData({
+      name: "",
+      image: "",
+      description: "",
+      productCategory: "",
+      active: true,
+    });
     setShowAddModal(true);
   };
 
@@ -241,6 +257,9 @@ const ProductListComponent = () => {
                     <th className="px-4 md:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-4 md:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Category
+                    </th>
                     <th className="px-4 md:px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
@@ -296,6 +315,11 @@ const ProductListComponent = () => {
                           >
                             {product.active ? "Active" : "Inactive"}
                           </div>
+                        </td>
+                        <td className="px-4 md:px-6 py-4 ">
+                          <span className="text-xs text-gray-700 font-medium px-3 py-1.5 bg-slate-400/30 rounded-full">
+                            {product.productCategory}
+                          </span>
                         </td>
                         <td className="px-4 md:px-6 py-4">
                           <div className="flex items-center justify-end gap-2">

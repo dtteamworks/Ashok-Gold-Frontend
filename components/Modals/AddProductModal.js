@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import { FiX, FiUpload, FiLoader, FiImage } from "react-icons/fi";
+import { API_BASE } from "@/lib/api";
 
 const AddProductModal = ({
   handleSave,
@@ -10,6 +11,29 @@ const AddProductModal = ({
   editingProduct,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/categories?status=active`);
+        if (!res.ok) throw new Error("Failed to fetch categories");
+        const { data } = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // NEW: Handler
+  const handleCategoryChange = (e) => {
+    setFormData({ ...formData, productCategory: e.target.value });
+  };
 
   const handleUploadSuccess = (result) => {
     const url = result?.info?.secure_url;
@@ -41,22 +65,49 @@ const AddProductModal = ({
         </div>
 
         <div className="space-y-4">
-          {/* Product Name */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Product Name
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 text-gray-900 placeholder:text-gray-400"
-              placeholder="Enter product name"
-            />
+          <div className="flex gap-6 flex-1 *:flex-1">
+            {/* Product Name */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Product Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 text-gray-900 placeholder:text-gray-400"
+                placeholder="Enter product name"
+              />
+            </div>
+            {/* category */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Product Category *
+              </label>
+              {loadingCategories ? (
+                <div className="flex items-center justify-center p-4 bg-gray-50 rounded-xl">
+                  <FiLoader className="w-4 h-4 animate-spin mr-2" />
+                  <span>Loading categories...</span>
+                </div>
+              ) : (
+                <select
+                  value={formData.productCategory || ""}
+                  onChange={handleCategoryChange}
+                  className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 text-gray-900"
+                  required
+                >
+                  <option value="">Select category...</option>
+                  {categories.map((cat) => (
+                    <option key={cat._id} value={cat.categoryName}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
           </div>
-
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -135,7 +186,7 @@ const AddProductModal = ({
               }
               className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all duration-200 bg-gray-50/50 text-gray-900 placeholder:text-gray-400 resize-vertical"
               placeholder="Enter product description..."
-              rows={4} // Height adjust
+              rows={3} // Height adjust
               required // Optional, but good UX
             />
           </div>
@@ -170,7 +221,12 @@ const AddProductModal = ({
             <button
               onClick={handleSave}
               className="flex-1 px-4 py-3 text-sm cursor-pointer bg-linear-to-r from-amber-500 to-yellow-500 text-white rounded-xl hover:from-amber-600 hover:to-yellow-600 transition-all duration-200 font-semibold shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
-              disabled={isUploading || !formData.image || !formData.description}
+              disabled={
+                isUploading ||
+                !formData.image ||
+                !formData.description ||
+                !formData.productCategory
+              }
             >
               {editingProduct ? "Update" : "Create"}
             </button>
